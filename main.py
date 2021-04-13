@@ -42,13 +42,10 @@ class ChatProcessor:
         self.execute()
 
     def get_private_message(self) -> str:
-        with open(self.log_file_path, encoding="utf-8") as log_file:
+        with open(self.log_file_path, encoding="utf-8", errors="ignore") as log_file:
             log_file.seek(0, 2)
             while True:
-                try:
-                    log_line = log_file.readline().rstrip()
-                except UnicodeDecodeError:
-                    print("Wystąpił błąd.")
+                log_line = log_file.readline().rstrip()
                 if not log_line:
                     sleep(0.1)
                     continue
