@@ -1,8 +1,6 @@
 import discord
 import json
-from typing import Optional
-from typing import List
-from typing import Dict
+from typing import Optional, List, Dict
 from threading import Thread
 from datetime import datetime
 from discord.ext import commands
