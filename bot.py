@@ -33,6 +33,18 @@ async def on_ready():
     print("Bot został uruchomiony.")
 
 
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument) and ctx.command.name == "pms":
+        embed = discord.Embed(title=":no_entry: Błąd :no_entry:",
+                              color=discord.Color.dark_red())
+        embed.add_field(name=f"Nie podałeś nicku!",
+                        value="Aby sprawdzić listę wiadomości podaj nick autora jako argument komendy.\n"
+                              "Przykładowe zastosowanie:\n"
+                              "`$pms jjay31`")
+        await ctx.channel.send(embed=embed)
+
+
 @bot.command(name="pms")
 async def send_pms(ctx, nick):
     if ctx.channel.type == discord.ChannelType.private and ctx.author.id == admin_id:
