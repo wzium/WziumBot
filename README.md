@@ -17,8 +17,10 @@ See [requirements.txt](requirements.txt).
 ## Screenshots
 ![pm](https://i.imgur.com/5qLWedw.png)
 
+![pms](https://i.imgur.com/V2aN0WF.png)
+
 ![pm_list](https://i.imgur.com/CJ0wf43.png)
 
 ![pms_error](https://i.imgur.com/bQT03yv.png)
 
-![pms_error2](https://i.imgur.com/V2aN0WF.png)
+![pms_error2](https://i.imgur.com/WTLL4vk.png)
