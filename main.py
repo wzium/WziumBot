@@ -1,6 +1,7 @@
 import os
 import bot
 import json
+from typing import Generator
 from time import sleep
 from datetime import datetime
 import asyncio
@@ -8,16 +9,16 @@ import asyncio
 
 if not os.path.isfile("config.json"):
     with open("config.json", 'w', encoding="utf-8") as config_file:
-        config_data = {"path": "C:\\Program Files (x86)\\MTA San Andreas 1.5\\MTA\\logs\\console.log",
-                       "admin_id": "Tu wprowadź swoje id użytkownika z discorda.",
-                       "token": "Tu wprowadź token bota z panelu deweloperskiego."}
+        config_data: dict = {"path": "C:\\Program Files (x86)\\MTA San Andreas 1.5\\MTA\\logs\\console.log",
+                             "admin_id": "Tu wprowadź swoje id użytkownika z discorda.",
+                             "token": "Tu wprowadź token bota z panelu deweloperskiego."}
         json.dump(config_data,
                   config_file,
                   indent=4,
                   sort_keys=True)
 else:
     with open("config.json", "r") as config_file:
-        config_data: dict = json.load(config_file)
+        config_data = json.load(config_file)
 
 
 class PrivateMessage:
@@ -41,7 +42,7 @@ class ChatProcessor:
             sleep(5)
         self.execute()
 
-    def get_private_message(self) -> str:
+    def get_private_message(self) -> Generator[str, None, None]:
         with open(self.log_file_path, encoding="utf-8", errors="ignore") as log_file:
             log_file.seek(0, 2)
             while True:
@@ -52,15 +53,15 @@ class ChatProcessor:
                 if log_line[33:][:2] == "<<":
                     yield log_line[36:]
 
-    def parse_message(self) -> tuple:
+    def parse_message(self) -> Generator[tuple, None, None]:
         for pm in self.get_private_message():
             unparsed_message: list = pm.lstrip('[').split(']')
             user_id: str = unparsed_message[0]
             try:
                 user_nick, user_message = unparsed_message[1].split(": ")
             except ValueError:
-                user_nick: str = unparsed_message[1].rstrip(':')
-                user_message: str = "(pusta wiadomość)"
+                user_nick = unparsed_message[1].rstrip(':')
+                user_message = "(pusta wiadomość)"
             current_datetime: str = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
             yield user_id, user_nick, user_message, current_datetime
 
@@ -70,7 +71,7 @@ class ChatProcessor:
             try:
                 data: dict = json.load(pm_logs)
             except json.decoder.JSONDecodeError:
-                data: dict = {}
+                data = {}
             if message[1] in data:
                 data[message[1]].append([message[2], message[3]])
             else:
