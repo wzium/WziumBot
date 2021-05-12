@@ -1,11 +1,14 @@
 import discord
 import json
+from typing import Optional
+from typing import List
+from typing import Dict
 from threading import Thread
 from datetime import datetime
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix="$")
-user = None
+user: Optional[discord.User] = None
 admin_id: int = 0
 
 
@@ -17,28 +20,41 @@ class NoMessagesFoundError(Exception):
     pass
 
 
-def get_nicks_from_logfile() -> list:
-    with open("pm_logs.json", "r") as pm_logs:
+def obtain_data() -> Dict[str, str]:
+    with open("pm_logs.json") as pm_logs:
         try:
             data: dict = json.load(pm_logs)
         except json.decoder.JSONDecodeError:
-            data: dict = {}
-        if len(list(data.keys())) > 0:
-            return list(data.keys())
-        else:
-            raise NoMessagesFoundError
+            data = {}
+        return data
 
 
-def get_pms_from_logfile(nick) -> list:
-    with open("pm_logs.json", "r") as pm_logs:
-        try:
-            data: dict = json.load(pm_logs)
-        except json.decoder.JSONDecodeError:
-            data: dict = {}
-        if nick in data:
-            return data[nick]
-        else:
-            raise NickNotFoundError
+def get_nicks_from_logfile() -> Optional[List[str]]:
+    data = obtain_data()
+    dict_keys = list(data.keys())
+    if len(dict_keys) > 0:
+        return dict_keys
+    else:
+        raise NoMessagesFoundError
+
+
+def get_pms_from_logfile(nick) -> Optional[str]:
+    data = obtain_data()
+    if nick in data:
+        return data[nick]
+    else:
+        raise NickNotFoundError
+
+
+def create_instruction_embed() -> discord.Embed:
+    instruction_embed: discord.Embed = discord.Embed(title=":page_with_curl: Lista graczy",
+                                                     color=discord.Color.gold())
+    instruction_embed.add_field(name="Instrukcja:",
+                                value="Wybierz nick z poniższej listy i użyj komendy "
+                                      "`$pms <nick>`\n "
+                                      "Przykładowe użycie:\n"
+                                      "`$pms jjay31`")
+    return instruction_embed
 
 
 @bot.event
@@ -54,7 +70,7 @@ async def send_pms(ctx, nick=None):
     if ctx.channel.type == discord.ChannelType.private and ctx.author.id == admin_id:
         try:
             if nick:
-                pms_from_nick: list = get_pms_from_logfile(nick)
+                pms_from_nick: str = get_pms_from_logfile(nick)
                 embed: discord.Embed = discord.Embed(title=f"Wiadomości od użytkownika {nick}:",
                                                      color=discord.Color.purple())
                 for message in pms_from_nick:
@@ -73,29 +89,19 @@ async def send_pms(ctx, nick=None):
             else:
                 try:
                     nicks_from_logs: list = get_nicks_from_logfile()
-
-                    def create_instruction_embed() -> discord.Embed:
-                        instruction_embed: discord.Embed = discord.Embed(title=":page_with_curl: Lista graczy",
-                                                                         color=discord.Color.gold())
-                        instruction_embed.add_field(name="Instrukcja:",
-                                                    value="Wybierz nick z poniższej listy i użyj komendy "
-                                                          "`$pms <nick>`\n "
-                                                          "Przykładowe użycie:\n"
-                                                          "`$pms jjay31`")
-                        return instruction_embed
-
                     if len(nicks_from_logs) > 25:
-                        embed: discord.Embed = create_instruction_embed()
+                        embed = create_instruction_embed()
                         await ctx.channel.send(embed=embed)
-                        if isinstance(len(nicks_from_logs), float):
-                            pages: int = len(nicks_from_logs) // 25 + 1
+                        number_of_nicks = len(nicks_from_logs)
+                        if isinstance((number_of_nicks/25), float):
+                            pages: int = (number_of_nicks // 25) + 1
                         else:
-                            pages: int = len(nicks_from_logs) // 25
+                            pages: int = number_of_nicks // 25
                         i: int = 0
                         page_number: int = 1
                         list_of_nicks: list = []
                         for nickname in nicks_from_logs:
-                            if i < 25:
+                            if i <= 25:
                                 list_of_nicks.append(nickname)
                                 i += 1
                             else:
@@ -105,9 +111,13 @@ async def send_pms(ctx, nick=None):
                                                    value=f"```{nicknames}```")
                                 await ctx.channel.send(embed=embed)
                                 page_number += 1
-                                i: int = 0
-                                list_of_nicks: list = []
-
+                                i = 0
+                                list_of_nicks = []
+                        nicknames: str = '\n'.join(list_of_nicks)
+                        embed.set_field_at(index=0,
+                                           name=f"Znalezione nicki ({page_number}/{pages}):",
+                                           value=f"```{nicknames}```")
+                        await ctx.channel.send(embed=embed)
                     else:
                         nicks: str = '\n'.join(nicks_from_logs)
                         embed = create_instruction_embed()
@@ -117,8 +127,8 @@ async def send_pms(ctx, nick=None):
                                            value=f"```{nicks}```")
                         await ctx.channel.send(embed=embed)
                 except NoMessagesFoundError:
-                    embed: discord.Embed = discord.Embed(title=":no_entry: Błąd :no_entry:",
-                                                         color=discord.Color.dark_red())
+                    embed = discord.Embed(title=":no_entry: Błąd :no_entry:",
+                                          color=discord.Color.dark_red())
                     embed.add_field(name=f"Nie znaleziono wiadomości!",
                                     value="Nie udało się znaleźć wiadomości prywatnych,\n"
                                           "upewnij się, że plik `pm_logs.json` nie został usunięty bądź uszkodzony.\n"
@@ -127,8 +137,8 @@ async def send_pms(ctx, nick=None):
         except NickNotFoundError or FileNotFoundError as exception:
             if type(exception).__name__ == "FileNotFoundError":
                 open("pm_logs.json", "x").close()
-            embed: discord.Embed = discord.Embed(title=":no_entry: Błąd :no_entry:",
-                                                 color=discord.Color.dark_red())
+            embed = discord.Embed(title=":no_entry: Błąd :no_entry:",
+                                  color=discord.Color.dark_red())
             embed.add_field(name=f"Brak wiadomości prywatnych od \"{nick}\"",
                             value="Nie znalazłem żadnej wiadomości prywatnej od tego użytkownika.\n"
                                   "Upewnij się, że nick został wprowadzony poprawnie i spróbuj ponownie.")
