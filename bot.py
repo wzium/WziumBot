@@ -63,9 +63,21 @@ async def on_ready():
     print("Bot został uruchomiony.")
 
 
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.NotOwner):
+        embed = discord.Embed(title=":no_entry: Błąd :no_entry:",
+                              color=discord.Color.dark_red())
+        embed.add_field(name=f"Komenda administracyjna",
+                        value="Ta komenda zarezerwowana jest dla twórcy tego bota,\n"
+                              "a Ty nie wyglądasz jak on!")
+        await ctx.channel.send(embed=embed)
+
+
 @bot.command(name="pms")
+@commands.is_owner()
 async def send_pms(ctx, nick=None):
-    if ctx.channel.type == discord.ChannelType.private and ctx.author.id == admin_id:
+    if ctx.channel.type == discord.ChannelType.private:
         try:
             if nick:
                 pms_from_nick: str = get_pms_from_logfile(nick)
