@@ -10,12 +10,12 @@ import asyncio
 if not os.path.isfile("config.json"):
     with open("config.json", 'w', encoding="utf-8") as config_file:
         config_data: dict = {"path": "C:\\Program Files (x86)\\MTA San Andreas 1.5\\MTA\\logs\\console.log",
-                             "admin_id": "Tu wprowadź swoje id użytkownika z discorda.",
                              "token": "Tu wprowadź token bota z panelu deweloperskiego."}
         json.dump(config_data,
                   config_file,
                   indent=4,
                   sort_keys=True)
+        exit()
 else:
     with open("config.json", "r") as config_file:
         config_data = json.load(config_file)
@@ -91,7 +91,6 @@ class ChatProcessor:
 
 
 if __name__ == "__main__":
-    if config_data["admin_id"] and config_data["token"]:
-        if config_data["admin_id"].isdigit():
-            bot.start(int(config_data["admin_id"]), config_data["token"])
-            ChatProcessor()
+    if config_data["token"]:
+        bot.start(config_data["token"])
+        ChatProcessor()

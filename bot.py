@@ -7,7 +7,6 @@ from discord.ext import commands
 
 bot = commands.Bot(command_prefix="$")
 user: Optional[discord.User] = None
-admin_id: int = 0
 
 
 class NickNotFoundError(Exception):
@@ -58,8 +57,6 @@ def create_instruction_embed() -> discord.Embed:
 @bot.event
 async def on_ready():
     global user
-    global admin_id
-    user = await bot.fetch_user(admin_id)
     print("Bot został uruchomiony.")
 
 
@@ -103,38 +100,39 @@ async def send_pms(ctx, nick=None):
                         embed = create_instruction_embed()
                         await ctx.channel.send(embed=embed)
                         number_of_nicks = len(nicks_from_logs)
-                        if isinstance((number_of_nicks/25), float):
+                        if (number_of_nicks % 25) != 0:
                             pages: int = (number_of_nicks // 25) + 1
                         else:
-                            pages: int = number_of_nicks // 25
+                            pages: int = (number_of_nicks // 25)
                         i: int = 0
                         page_number: int = 1
                         list_of_nicks: list = []
                         for nickname in nicks_from_logs:
-                            if i <= 25:
-                                list_of_nicks.append(nickname)
+                            list_of_nicks.append(nickname)
+                            if i < 24:
                                 i += 1
                             else:
                                 nicknames: str = '\n'.join(list_of_nicks)
                                 embed.set_field_at(index=0,
                                                    name=f"Znalezione nicki ({page_number}/{pages}):",
-                                                   value=f"```{nicknames}```")
+                                                   value=f"```\n{nicknames}```")
                                 await ctx.channel.send(embed=embed)
                                 page_number += 1
                                 i = 0
                                 list_of_nicks = []
-                        nicknames: str = '\n'.join(list_of_nicks)
-                        embed.set_field_at(index=0,
-                                           name=f"Znalezione nicki ({page_number}/{pages}):",
-                                           value=f"```{nicknames}```")
-                        await ctx.channel.send(embed=embed)
+                        if list_of_nicks:
+                            nicknames: str = '\n'.join(list_of_nicks)
+                            embed.set_field_at(index=0,
+                                               name=f"Znalezione nicki ({page_number}/{pages}):",
+                                               value=f"```\n{nicknames}```")
+                            await ctx.channel.send(embed=embed)
                     else:
                         nicks: str = '\n'.join(nicks_from_logs)
                         embed = create_instruction_embed()
                         await ctx.channel.send(embed=embed)
                         embed.set_field_at(index=0,
                                            name="Znalezione nicki:",
-                                           value=f"```{nicks}```")
+                                           value=f"```\n{nicks}```")
                         await ctx.channel.send(embed=embed)
                 except NoMessagesFoundError:
                     embed = discord.Embed(title=":no_entry: Błąd :no_entry:",
@@ -172,7 +170,5 @@ async def send_message(message):
     await user.send(embed=embed)
 
 
-def start(admin_user_id, token):
-    global admin_id
-    admin_id = admin_user_id
+def start(token):
     Thread(target=lambda: bot.run(token), daemon=True).start()
