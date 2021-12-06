@@ -1,9 +1,9 @@
-import discord
+import nextcord as discord
 import json
 from typing import Optional, List, Dict
 from threading import Thread
 from datetime import datetime
-from discord.ext import commands
+from nextcord.ext import commands
 
 bot = commands.Bot(command_prefix="$")
 user: Optional[discord.User] = None
