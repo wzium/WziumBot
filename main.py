@@ -10,15 +10,39 @@ import asyncio
 if not os.path.isfile("config.json"):
     with open("config.json", 'w', encoding="utf-8") as config_file:
         config_data: dict = {"path": "C:\\Program Files (x86)\\MTA San Andreas 1.5\\MTA\\logs\\console.log",
-                             "token": "Tu wprowadź token bota z panelu deweloperskiego."}
+                             "token": "Enter your bots token from Discord Dev Portal.",
+                             "language": "en"}
         json.dump(config_data,
                   config_file,
                   indent=4,
                   sort_keys=True)
+        print("Please check the newly generated config file.")
+        input()
         exit()
 else:
+    languages = []
+    if os.path.exists("languages"):
+        for file in os.listdir("languages"):
+            lang = file.split('.')[0]
+            languages.append(lang)
+    else:
+        print("Could not find languages folder, please fix it before running the program again.")
+
     with open("config.json", "r") as config_file:
         config_data = json.load(config_file)
+
+    if not config_data["language"] in languages:
+        print("Wrong language detected, please correct it in the config file.")
+        input()
+        exit()
+    else:
+        try:
+            with open(f"languages\\{config_data['language']}.json", "r", encoding="utf-8") as lang_file:
+                lang_data = json.load(lang_file)
+            bot.set_lang_data(lang_data)
+        except json.JSONDecodeError:
+            print("Something bad happened with your language file, check if everything is correctly written.")
+            input()
 
 
 class PrivateMessage:
@@ -37,7 +61,7 @@ class ChatProcessor:
             try:
                 os.remove(self.log_file_path)
             except PermissionError:
-                print("Gra jest już uruchomiona.")
+                print("Game is already running.")
         while not os.path.isfile(self.log_file_path):
             sleep(5)
         self.execute()
@@ -61,7 +85,7 @@ class ChatProcessor:
                 user_nick, user_message = unparsed_message[1].split(": ")
             except ValueError:
                 user_nick = unparsed_message[1].rstrip(':')
-                user_message = "(pusta wiadomość)"
+                user_message = f"({lang_data['new_message_empty']})"
             current_datetime: str = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
             yield user_id, user_nick, user_message, current_datetime
 
@@ -91,6 +115,6 @@ class ChatProcessor:
 
 
 if __name__ == "__main__":
-    if config_data["token"]:
+    if config_data["token"] and bot.lang_data:
         bot.start(config_data["token"])
         ChatProcessor()
