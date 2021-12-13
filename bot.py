@@ -137,15 +137,15 @@ async def send_pms(ctx, nick=None):
                                            name=lang_data['nicknames_list_desc'],
                                            value=f"```\n{nicks}```")
                         await ctx.channel.send(embed=embed)
-                except NoMessagesFoundError:
+                except NoMessagesFoundError or FileNotFoundError as exception:
+                    if type(exception).__name__ == "FileNotFoundError":
+                        open("pm_logs.json", "x").close()
                     embed = discord.Embed(title=f":no_entry: {lang_data['error']} :no_entry:",
                                           color=discord.Color.dark_red())
                     embed.add_field(name=lang_data['error_messages_not_found_title'],
                                     value=lang_data['error_messages_not_found_desc'])
                     await ctx.channel.send(embed=embed)
-        except NickNotFoundError or FileNotFoundError as exception:
-            if type(exception).__name__ == "FileNotFoundError":
-                open("pm_logs.json", "x").close()
+        except NickNotFoundError:
             embed = discord.Embed(title=f":no_entry: {lang_data['error']} :no_entry:",
                                   color=discord.Color.dark_red())
             embed.add_field(name=f"{lang_data['error_wrong_user_title']} \"{nick}\"",
