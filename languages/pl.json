@@ -1,0 +1,19 @@
+{
+	"instruction_title": "Instrukcja",
+	"instruction_desc": "Wybierz nick z poniższej listy i użyj komendy",
+	"instruction_example": "Przykładowe użycie",
+	"error": "Błąd",
+	"error_admin_title": "Komenda administracyjna",
+	"error_admin_desc": "Ta komenda zarezerwowana jest dla twórcy tego bota,\na Ty nie wyglądasz jak on!",
+	"error_messages_not_found_title": "Nie znaleziono wiadomości!",
+	"error_messages_not_found_desc": "Nie udało się znaleźć wiadomości prywatnych,\nupewnij się, że plik `pm_logs.json` nie został usunięty bądź uszkodzony.\nJeśli nie, oznacza to, że bot nie zarejestrował jeszcze żadnej wiadomości.",
+	"error_wrong_user_title": "Brak wiadomości prywatnych od",
+	"error_wrong_user_desc": "Nie znalazłem żadnej wiadomości prywatnej od tego użytkownika.\nUpewnij się, że nick został wprowadzony poprawnie i spróbuj ponownie.", 
+	"user_messages_title": "Wiadomości od użytkownika",
+	"nicknames_list_title": "Znalezione nicki",
+	"new_message_title": "Dostałeś wiadomość!",
+	"new_message_id_title": "ID nadawcy",
+	"new_message_content_title": "Wiadomość",
+	"new_message_time": "Godzina",
+	"new_message_empty": "pusta wiadomość"
+}	

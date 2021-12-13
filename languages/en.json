@@ -1,0 +1,19 @@
+{
+	"instruction_title": "Usage",
+	"instruction_desc": "Pick one user from the following list and use command",
+	"instruction_example": "Sample usage",
+	"error": "Error",
+	"error_admin_title": "Administrative command",
+	"error_admin_desc": "This command can only be used by the creator of this bot,\nand you don't look like him!",
+	"error_messages_not_found_title": "Messages not found!",
+	"error_messages_not_found_desc": "Couldn't find any messages,\nplease check if your `pm_logs.json` file didn't get deleted or corrupted.\nIf not, the bot didn't register any private messages yet.",
+	"error_wrong_user_title": "Couldn't find messages from",
+	"error_wrong_user_desc": "I couldn't find any message from this user.\nPlease check if you entered the proper nickname and try again.", 
+	"user_messages_title": "Messages from",
+	"nicknames_list_title": "List of users",
+	"new_message_title": "You got a new message!",
+	"new_message_id_title": "Senders ID",
+	"new_message_content_title": "Message",
+	"new_message_time": "Time",
+	"new_message_empty": "empty message"
+}	
