@@ -49,7 +49,7 @@ def get_pms_from_logfile(nick) -> Optional[str]:
 
 
 def create_instruction_embed() -> discord.Embed:
-    instruction_embed: discord.Embed = discord.Embed(title=":page_with_curl: Lista graczy",
+    instruction_embed: discord.Embed = discord.Embed(title=f":page_with_curl: {lang_data['nicknames_list_title']}",
                                                      color=discord.Color.gold())
     instruction_embed.add_field(name=f"{lang_data['instruction_title']}:",
                                 value=f"{lang_data['instruction_desc']} "
@@ -117,7 +117,7 @@ async def send_pms(ctx, nick=None):
                             else:
                                 nicknames: str = '\n'.join(list_of_nicks)
                                 embed.set_field_at(index=0,
-                                                   name=f"{lang_data['nicknames_list_title']} ({page_number}/{pages}):",
+                                                   name=f"{lang_data['nicknames_list_desc']} ({page_number}/{pages}):",
                                                    value=f"```\n{nicknames}```")
                                 await ctx.channel.send(embed=embed)
                                 page_number += 1
@@ -126,7 +126,7 @@ async def send_pms(ctx, nick=None):
                         if list_of_nicks:
                             nicknames: str = '\n'.join(list_of_nicks)
                             embed.set_field_at(index=0,
-                                               name=f"{lang_data['nicknames_list_title']} ({page_number}/{pages}):",
+                                               name=f"{lang_data['nicknames_list_desc']} ({page_number}/{pages}):",
                                                value=f"```\n{nicknames}```")
                             await ctx.channel.send(embed=embed)
                     else:
@@ -134,7 +134,7 @@ async def send_pms(ctx, nick=None):
                         embed = create_instruction_embed()
                         await ctx.channel.send(embed=embed)
                         embed.set_field_at(index=0,
-                                           name=lang_data['nicknames_list_title'],
+                                           name=lang_data['nicknames_list_desc'],
                                            value=f"```\n{nicks}```")
                         await ctx.channel.send(embed=embed)
                 except NoMessagesFoundError:
