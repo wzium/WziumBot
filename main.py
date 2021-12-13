@@ -1,7 +1,7 @@
 import os
 import bot
 import json
-from typing import Generator
+from typing import Generator, Dict, Optional, List
 from time import sleep
 from datetime import datetime
 import asyncio
@@ -9,9 +9,9 @@ import asyncio
 
 if not os.path.isfile("config.json"):
     with open("config.json", 'w', encoding="utf-8") as config_file:
-        config_data: dict = {"path": "C:\\Program Files (x86)\\MTA San Andreas 1.5\\MTA\\logs\\console.log",
-                             "token": "Enter your bot's token from Discord Dev Portal.",
-                             "language": "en"}
+        config_data: Dict[str, str] = {"path": "C:\\Program Files (x86)\\MTA San Andreas 1.5\\MTA\\logs\\console.log",
+                                       "token": "Enter your bot's token from Discord Dev Portal.",
+                                       "language": "en"}
         json.dump(config_data,
                   config_file,
                   indent=4,
@@ -20,10 +20,10 @@ if not os.path.isfile("config.json"):
         input()
         exit()
 else:
-    languages = []
+    languages: Optional[List[str]] = []
     if os.path.exists("languages"):
         for file in os.listdir("languages"):
-            lang = file.split('.')[0]
+            lang: str = file.split('.')[0]
             languages.append(lang)
     else:
         print("Could not find languages folder, please fix it before running the program again.")
@@ -70,7 +70,7 @@ class ChatProcessor:
         with open(self.log_file_path, encoding="utf-8", errors="ignore") as log_file:
             log_file.seek(0, 2)
             while True:
-                log_line = log_file.readline().rstrip()
+                log_line: str = log_file.readline().rstrip()
                 if not log_line:
                     sleep(0.1)
                     continue
@@ -84,8 +84,8 @@ class ChatProcessor:
             try:
                 user_nick, user_message = unparsed_message[1].split(": ")
             except ValueError:
-                user_nick = unparsed_message[1].rstrip(':')
-                user_message = f"({lang_data['new_message_empty']})"
+                user_nick: str = unparsed_message[1].rstrip(':')
+                user_message: str = f"({lang_data['new_message_empty']})"
             current_datetime: str = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
             yield user_id, user_nick, user_message, current_datetime
 
@@ -93,7 +93,7 @@ class ChatProcessor:
     def save_to_pmlogs(message: tuple):
         with open("pm_logs.json", 'r') as pm_logs:
             try:
-                data: dict = json.load(pm_logs)
+                data: Optional[Dict[str, List[List[str, str]]]] = json.load(pm_logs)
             except json.decoder.JSONDecodeError:
                 data = {}
             if message[1] in data:
