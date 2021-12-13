@@ -11,6 +11,7 @@
 	"error_wrong_user_desc": "I couldn't find any message from this user.\nPlease check if you entered the proper nickname and try again.", 
 	"user_messages_title": "Messages from",
 	"nicknames_list_title": "List of users",
+	"nicknames_list_desc": "Found users",
 	"new_message_title": "You got a new message!",
 	"new_message_id_title": "Senders ID",
 	"new_message_content_title": "Message",
