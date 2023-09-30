@@ -5,7 +5,10 @@ from threading import Thread
 from datetime import datetime
 from nextcord.ext import commands
 
-bot = commands.Bot(command_prefix="$")
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix="$", intents=intents)
 lang_data: Optional[Dict[str, str]] = None
 
 
