@@ -9,7 +9,7 @@ import asyncio
 
 if not os.path.isfile("config.json"):
     with open("config.json", 'w', encoding="utf-8") as config_file:
-        config_data: Dict[str, str] = {"path": "C:\\Program Files (x86)\\MTA San Andreas 1.5\\MTA\\logs\\console.log",
+        config_data: Dict[str, str] = {"path": "C:\\Program Files (x86)\\MTA San Andreas 1.6\\MTA\\logs\\console.log",
                                        "token": "Enter your bot's token from Discord Dev Portal.",
                                        "language": "en"}
         json.dump(config_data,
